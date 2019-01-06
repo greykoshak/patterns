@@ -14,7 +14,7 @@ class TestFibonacciNumbers(unittest.TestCase):
                 self.assertEqual(fibo(n), fib_n)
 
     def test_positive(self):
-        self.assertEqual(fibo(10), 55)
+        self.assertEqual(fibo(10), 550)
 
     def test_negative(self):
         with self.subTest(i=1):
