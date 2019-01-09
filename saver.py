@@ -15,7 +15,8 @@ import math
    пересчёт координат точек (set_points); 
    отрисовка ломаной (draw_points),
 Реализовать класс Knot — потомок класса Polyline — в котором 
-   добавление и пересчёт координат инициируют вызов функции get_knot для расчёта точек кривой по добавляемым опорным.
+   добавление и пересчёт координат инициируют вызов функции get_knot для расчёта 
+   точек кривой по добавляемым опорным.
 
 Все классы должны быть самостоятельными и не использовать внешние функции.
 
@@ -27,6 +28,89 @@ import math
 """
 
 SCREEN_DIM = (800, 600)
+
+class ScreenSaver():
+    """
+    Ядро системы, выполняется в основном цикле.
+    """
+    def __init__(self, caption):
+        pygame.init()
+        pygame.font.init()
+        self.gameDisplay = pygame.display.set_mode(SCREEN_DIM)
+        pygame.display.set_caption(caption)
+
+        self.steps = 35
+        self.working = True
+        self.points = []
+        self.speeds = []
+        self.show_help = False
+        self.pause = True
+
+        self.hue = 0
+        self.color = pygame.Color(0)
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.working = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.working = False
+                if event.key == pygame.K_r:
+                    self.points = []
+                    self.speeds = []
+                if event.key == pygame.K_p:
+                    self.pause = not self.pause
+                if event.key == pygame.K_KP_PLUS:
+                    self.steps += 1
+                if event.key == pygame.K_F1:
+                    self.show_help = not self.show_help
+                if event.key == pygame.K_KP_MINUS:
+                    self.steps -= 1 if self.steps > 1 else 0
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.points.append(event.pos)
+                self.speeds.append((random.random() * 2, random.random() * 2))
+
+    def run(self):
+        while self.working:
+            self.handle_events()
+
+            self.gameDisplay.fill((0, 0, 0))
+            self.hue = (self.hue + 1) % 360
+            self.color.hsla = (self.hue, 100, 50, 100)
+            draw_points(self.points)
+            draw_points(get_knot(self.points, self.steps), "line", 3, self.color)
+
+            if not self.pause:
+                set_points(self.points, self.speeds)
+            if self.show_help:
+                draw_help()
+
+            pygame.display.flip()
+
+        pygame.display.quit()
+        pygame.quit()
+        exit(0)
+
+
+class Vec2d():
+    """
+    Обработка двумерных векторов
+    """
+    pass
+
+class Polyline():
+    """
+    Класс замкнутых ломаных
+    """
+    pass
+
+class Knot():
+    """
+    Расчёт точек кривой по добавляемым опорным точкам
+    """
+    pass
 
 
 # Методы для работы с векторами
@@ -137,55 +221,58 @@ def set_points(points, speeds):
 
 # Основная программа
 if __name__ == "__main__":
-    pygame.init()
-    gameDisplay = pygame.display.set_mode(SCREEN_DIM)
-    pygame.display.set_caption("MyScreenSaver")
+    # pygame.init()
+    # gameDisplay = pygame.display.set_mode(SCREEN_DIM)
+    # pygame.display.set_caption("MyScreenSaver")
+    #
+    # steps = 35
+    # working = True
+    # points = []
+    # speeds = []
+    # show_help = False
+    # pause = True
+    #
+    # hue = 0
+    # color = pygame.Color(0)
+    #
+    # while working:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             working = False
+    #         if event.type == pygame.KEYDOWN:
+    #             if event.key == pygame.K_ESCAPE:
+    #                 working = False
+    #             if event.key == pygame.K_r:
+    #                 points = []
+    #                 speeds = []
+    #             if event.key == pygame.K_p:
+    #                 pause = not pause
+    #             if event.key == pygame.K_KP_PLUS:
+    #                 steps += 1
+    #             if event.key == pygame.K_F1:
+    #                 show_help = not show_help
+    #             if event.key == pygame.K_KP_MINUS:
+    #                 steps -= 1 if steps > 1 else 0
+    #
+    #         if event.type == pygame.MOUSEBUTTONDOWN:
+    #             points.append(event.pos)
+    #             speeds.append((random.random() * 2, random.random() * 2))
+    #
+    #     gameDisplay.fill((0, 0, 0))
+    #     hue = (hue + 1) % 360
+    #     color.hsla = (hue, 100, 50, 100)
+    #     draw_points(points)
+    #     draw_points(get_knot(points, steps), "line", 3, color)
+    #     if not pause:
+    #         set_points(points, speeds)
+    #     if show_help:
+    #         draw_help()
+    #
+    #     pygame.display.flip()
+    #
+    # pygame.display.quit()
+    # pygame.quit()
+    # exit(0)
 
-    steps = 35
-    working = True
-    points = []
-    speeds = []
-    show_help = False
-    pause = True
-
-    hue = 0
-    color = pygame.Color(0)
-
-    while working:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                working = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    working = False
-                if event.key == pygame.K_r:
-                    points = []
-                    speeds = []
-                if event.key == pygame.K_p:
-                    pause = not pause
-                if event.key == pygame.K_KP_PLUS:
-                    steps += 1
-                if event.key == pygame.K_F1:
-                    show_help = not show_help
-                if event.key == pygame.K_KP_MINUS:
-                    steps -= 1 if steps > 1 else 0
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                points.append(event.pos)
-                speeds.append((random.random() * 2, random.random() * 2))
-
-        gameDisplay.fill((0, 0, 0))
-        hue = (hue + 1) % 360
-        color.hsla = (hue, 100, 50, 100)
-        draw_points(points)
-        draw_points(get_knot(points, steps), "line", 3, color)
-        if not pause:
-            set_points(points, speeds)
-        if show_help:
-            draw_help()
-
-        pygame.display.flip()
-
-    pygame.display.quit()
-    pygame.quit()
-    exit(0)
+    saver = ScreenSaver("MyScreenSaver")
+    saver.run()
