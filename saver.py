@@ -2,37 +2,12 @@ import pygame  # pip3 install pygame
 import random
 import math
 
-"""
-Реализовать класс 2-мерных векторов Vec2d — определить основные математические операции: 
-   сумма Vec2d.__add__, 
-   разность Vec2d.__sub__, 
-   умножение на скаляр и 
-   скалярное умножение (Vec2d.__mul__); 
-   добавить возможность вычислять длину вектора a через len(a);
-   добавить метод int_pair для получение пары (tuple) целых чисел.
-Реализовать класс замкнутых ломаных Polyline, с возможностями: 
-   добавление в ломаную точки (Vec2d) c её скоростью; 
-   пересчёт координат точек (set_points); 
-   отрисовка ломаной (draw_points),
-Реализовать класс Knot — потомок класса Polyline — в котором 
-   добавление и пересчёт координат инициируют вызов функции get_knot для расчёта 
-   точек кривой по добавляемым опорным.
-
-Все классы должны быть самостоятельными и не использовать внешние функции.
-
-Дополнительные задачи (для получения "положительной" оценки не обязательны):
-
-Реализовать возможность удаления точки из кривой.
-Реализовать возможность удаления/добавления точек сразу для нескольких кривых.
-Реализовать возможность ускорения/замедления движения кривых.
-"""
-
 SCREEN_DIM = (800, 600)
 
 
 class ScreenSaver():
     """
-    Ядро системы, выполняется в основном цикле.
+    The core of the system is executed in the main loop.
     """
 
     def __init__(self, caption=""):
@@ -104,37 +79,40 @@ class ScreenSaver():
 
 class Vec2d():
     """
-    Обработка двумерных векторов.  Методы для работы с векторами.
+    Handling two-dimensional vectors. Methods for working with vectors.
     """
 
-    def sub(self, x, y):  # разность двух векторов
+    def sub(self, x, y):  # subtraction of two vectors
         return x[0] - y[0], x[1] - y[1]
 
-    def add(self, x, y):  # сумма двух векторов
+    def add(self, x, y):  # sum of two vectors
         return x[0] + y[0], x[1] + y[1]
 
-    def length(self, x):  # длина вектора
+    def length(self, x):  # vector length
         return math.sqrt(x[0] * x[0] + x[1] * x[1])
 
-    def mul(self, v, k):  # умножение вектора на число
+    def mul(self, v, k):  # multiply vector by number
         return v[0] * k, v[1] * k
 
-    def scal_mul(self, v, k):  # скалярное умножение векторов
+    def scal_mul(self, v, k):  # scalar multiplication of vectors
         return v[0] * k, v[1] * k
 
-    def vec(self, x, y):  # создание вектора по началу (x) и концу (y) направленного отрезка
+    def vec(self, x, y):  # create a vector at the beginning (x) and end (y) of a directed segment
         return self.sub(y, x)
 
     def int_pair(self, x, y):
         return tuple([x, y])
 
+    def len(self, v):
+        return math.sqrt(v[0] * v[0] + v[1] * v[1])
+
 
 class Polyline(ScreenSaver, Vec2d):
     """
-    Класс замкнутых ломаных
+    Class of closed broken lines
     """
 
-    # Персчитывание координат опорных точек
+    # Recalculation of GCP coordinates
     def set_points(self, points, speeds):
         for p in range(len(points)):
             points[p] = self.add(points[p], speeds[p])
@@ -143,7 +121,7 @@ class Polyline(ScreenSaver, Vec2d):
             if points[p][1] > SCREEN_DIM[1] or points[p][1] < 0:
                 speeds[p] = (speeds[p][0], -speeds[p][1])
 
-    # "Отрисовка" точек
+    # "Draw" points
     def draw_points(self, points, style="points", width=3, color=(255, 255, 255)):
         if style == "line":
             for p_n in range(-1, len(points) - 1):
@@ -158,7 +136,7 @@ class Polyline(ScreenSaver, Vec2d):
 
 class Knot(Polyline):
     """
-    Расчёт точек кривой по добавляемым опорным точкам
+    Calculation of curve points by added reference points
     """
 
     # Сглаживание ломаной
@@ -192,7 +170,7 @@ class Knot(Polyline):
 
 class Helper(ScreenSaver):
     """
-    Отрисовка справки
+    Drawing help
     """
 
     def draw_help(self):
@@ -217,7 +195,7 @@ class Helper(ScreenSaver):
                 text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
 
 
-# Основная программа
+# Main program
 if __name__ == "__main__":
     saver = ScreenSaver("MyScreenSaver")
     saver.run()
