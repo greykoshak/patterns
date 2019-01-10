@@ -78,7 +78,7 @@ class ScreenSaver():
 
         hlp = Helper()
         pol = Polyline()
-        knot = Knot("MyScreenSaver v0.1")
+        knot = Knot("MyScreenSaver version 0.1")
         v2d = Vec2d()
 
         while self.working:
@@ -104,8 +104,7 @@ class ScreenSaver():
 
 class Vec2d():
     """
-    Обработка двумерных векторов
-    Методы для работы с векторами
+    Обработка двумерных векторов.  Методы для работы с векторами.
     """
 
     def sub(self, x, y):  # разность двух векторов
@@ -114,7 +113,7 @@ class Vec2d():
     def add(self, x, y):  # сумма двух векторов
         return x[0] + y[0], x[1] + y[1]
 
-    def length(self, x):  # длинна вектора
+    def length(self, x):  # длина вектора
         return math.sqrt(x[0] * x[0] + x[1] * x[1])
 
     def mul(self, v, k):  # умножение вектора на число
@@ -125,6 +124,9 @@ class Vec2d():
 
     def vec(self, x, y):  # создание вектора по началу (x) и концу (y) направленного отрезка
         return self.sub(y, x)
+
+    def int_pair(self, x, y):
+        return tuple([x, y])
 
 
 class Polyline(ScreenSaver, Vec2d):
@@ -154,7 +156,7 @@ class Polyline(ScreenSaver, Vec2d):
                                    (int(p[0]), int(p[1])), width)
 
 
-class Knot(ScreenSaver, Vec2d):
+class Knot(Polyline):
     """
     Расчёт точек кривой по добавляемым опорным точкам
     """
@@ -217,58 +219,5 @@ class Helper(ScreenSaver):
 
 # Основная программа
 if __name__ == "__main__":
-    # pygame.init()
-    # gameDisplay = pygame.display.set_mode(SCREEN_DIM)
-    # pygame.display.set_caption("MyScreenSaver")
-    #
-    # steps = 35
-    # working = True
-    # points = []
-    # speeds = []
-    # show_help = False
-    # pause = True
-    #
-    # hue = 0
-    # color = pygame.Color(0)
-    #
-    # while working:
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             working = False
-    #         if event.type == pygame.KEYDOWN:
-    #             if event.key == pygame.K_ESCAPE:
-    #                 working = False
-    #             if event.key == pygame.K_r:
-    #                 points = []
-    #                 speeds = []
-    #             if event.key == pygame.K_p:
-    #                 pause = not pause
-    #             if event.key == pygame.K_KP_PLUS:
-    #                 steps += 1
-    #             if event.key == pygame.K_F1:
-    #                 show_help = not show_help
-    #             if event.key == pygame.K_KP_MINUS:
-    #                 steps -= 1 if steps > 1 else 0
-    #
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             points.append(event.pos)
-    #             speeds.append((random.random() * 2, random.random() * 2))
-    #
-    #     gameDisplay.fill((0, 0, 0))
-    #     hue = (hue + 1) % 360
-    #     color.hsla = (hue, 100, 50, 100)
-    #     draw_points(points)
-    #     draw_points(get_knot(points, steps), "line", 3, color)
-    #     if not pause:
-    #         set_points(points, speeds)
-    #     if show_help:
-    #         draw_help()
-    #
-    #     pygame.display.flip()
-    #
-    # pygame.display.quit()
-    # pygame.quit()
-    # exit(0)
-
     saver = ScreenSaver("MyScreenSaver")
     saver.run()
