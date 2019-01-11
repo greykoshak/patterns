@@ -10,11 +10,12 @@ class ScreenSaver():
     The core of the system is executed in the main loop.
     """
 
-    def __init__(self, caption=""):
+    def __init__(self, caption=None):
         pygame.init()
         pygame.font.init()
         self.gameDisplay = pygame.display.set_mode(SCREEN_DIM)
-        pygame.display.set_caption(caption)
+        if caption is not None:
+            pygame.display.set_caption(caption)
 
         self.steps = 35
         self.working = True
@@ -44,17 +45,26 @@ class ScreenSaver():
                     self.show_help = not self.show_help
                 if event.key == pygame.K_KP_MINUS:
                     self.steps -= 1 if self.steps > 1 else 0
+                if event.key == pygame.K_UP:
+                    # knot.speed_up(2)
+                    pass
+                if event.key == pygame.K_DOWN:
+                    # knot.speed_up(0.5)
+                    pass
 
+                if event.key == pygame.K_DELETE:
+                    # if len(knot.points) > 3:
+                    #     knot.delete_point_by_index(-1)
+                    pass
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.points.append(event.pos)
                 self.speeds.append((random.random() * 2, random.random() * 2))
 
     def run(self):
 
+        pol = Polyline("MyScreenSaver version 0.1")
+        knot = Knot()
         hlp = Helper()
-        pol = Polyline()
-        knot = Knot("MyScreenSaver version 0.1")
-        v2d = Vec2d()
 
         while self.working:
             self.handle_events()
@@ -82,29 +92,23 @@ class Vec2d():
     Handling two-dimensional vectors. Methods for working with vectors.
     """
 
-    def sub(self, x, y):  # subtraction of two vectors
-        return x[0] - y[0], x[1] - y[1]
-
-    def add(self, x, y):  # sum of two vectors
+    def __add__(self, x, y):  # sum of two vectors
         return x[0] + y[0], x[1] + y[1]
 
-    def length(self, x):  # vector length
-        return math.sqrt(x[0] * x[0] + x[1] * x[1])
+    def __sub__(self, x, y):  # subtraction of two vectors
+        return x[0] - y[0], x[1] - y[1]
 
-    def mul(self, v, k):  # multiply vector by number
-        return v[0] * k, v[1] * k
-
-    def scal_mul(self, v, k):  # scalar multiplication of vectors
-        return v[0] * k, v[1] * k
-
-    def vec(self, x, y):  # create a vector at the beginning (x) and end (y) of a directed segment
-        return self.sub(y, x)
+    def __mul__(self, vec, multiplier):  # multiply vector by number or vector
+        if isinstance(multiplier, int) or isinstance(multiplier, float):
+            return vec[0] * multiplier, vec[1] * multiplier
+        else:
+            return vec[0] * multiplier[0], vec[1] * multiplier[1]
 
     def int_pair(self, x, y):
-        return tuple([x, y])
+        return tuple([int(x), int(y)])
 
     def len(self, v):
-        return math.sqrt(v[0] * v[0] + v[1] * v[1])
+        return int((v[0] * v[0] + v[1] * v[1]) ** 0.5)
 
 
 class Polyline(ScreenSaver, Vec2d):
@@ -115,7 +119,7 @@ class Polyline(ScreenSaver, Vec2d):
     # Recalculation of GCP coordinates
     def set_points(self, points, speeds):
         for p in range(len(points)):
-            points[p] = self.add(points[p], speeds[p])
+            points[p] = self.__add__(points[p], speeds[p])
             if points[p][0] > SCREEN_DIM[0] or points[p][0] < 0:
                 speeds[p] = (-speeds[p][0], speeds[p][1])
             if points[p][1] > SCREEN_DIM[1] or points[p][1] < 0:
@@ -145,7 +149,7 @@ class Knot(Polyline):
             deg = len(points) - 1
         if deg == 0:
             return points[0]
-        return self.add(self.mul(points[deg], alpha), self.mul(self.get_point(points, alpha, deg - 1), 1 - alpha))
+        return self.__add__(self.__mul__(points[deg], alpha), self.__mul__(self.get_point(points, alpha, deg - 1), 1 - alpha))
 
     def get_points(self, base_points, count):
         alpha = 1 / count
@@ -160,9 +164,9 @@ class Knot(Polyline):
         res = []
         for i in range(-2, len(points) - 2):
             ptn = []
-            ptn.append(self.mul(self.add(points[i], points[i + 1]), 0.5))
+            ptn.append(self.__mul__(self.__add__(points[i], points[i + 1]), 0.5))
             ptn.append(points[i + 1])
-            ptn.append(self.mul(self.add(points[i + 1], points[i + 2]), 0.5))
+            ptn.append(self.__mul__(self.__add__(points[i + 1], points[i + 2]), 0.5))
 
             res.extend(self.get_points(ptn, count))
         return res
@@ -183,6 +187,9 @@ class Helper(ScreenSaver):
         data.append(["P", "Pause/Play"])
         data.append(["Num+", "More points"])
         data.append(["Num-", "Less points"])
+        data.append(["Up", "Speed up"])
+        data.append(["Down", "Speed down"])
+        data.append(['Del', 'Delete a point'])
         data.append(["", ""])
         data.append([str(self.steps), "Current points"])
 
