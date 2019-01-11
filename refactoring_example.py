@@ -35,7 +35,7 @@ class Vec2d:
 
     def __len__(self):
         """
-        Ð•ÑÐ»Ð¸ ÑƒÐ±Ñ€Ð°Ñ‚ÑŒ Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ðµ Ðº int, Ð±ÑƒÐ´ÐµÑ‚ Ð²Ñ‹Ð·Ð²Ð°Ð½Ð¾ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ \_(Ð¾_Ð¾)_/
+        Если убрать преобразование к int, будет вызвано исключение \_(о_о)_/
         """
 
         return int(math.sqrt(self.x * self.x + self.y * self.y))
@@ -158,7 +158,7 @@ class Knot(Polyline):
         return knot_poly
 
 
-# ÐžÑ‚Ñ€Ð¸ÑÐ¾Ð²ÐºÐ° ÑÐ¿Ñ€Ð°Ð²ÐºÐ¸
+# Отрисовка справки
 def draw_help():
     gameDisplay.fill((50, 50, 50))
     font1 = pygame.font.SysFont("courier", 24)
@@ -185,7 +185,7 @@ def draw_help():
             text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
 
 
-# ÐžÑÐ½Ð¾Ð²Ð½Ð°Ñ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð°
+# Основная программа
 if __name__ == "__main__":
     pygame.init()
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
