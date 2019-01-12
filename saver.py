@@ -1,6 +1,5 @@
 import pygame  # pip3 install pygame
 import random
-import math
 
 SCREEN_DIM = (800, 600)
 
@@ -28,7 +27,6 @@ class Vec2d():
 
     def int_pair(self):
         return tuple([int(self.x), int(self.y)])
-        # return (int(self.coords[0]), int(self.coords[1]))
 
     def __len__(self):
         # If you remove the conversion to int, an exception will be thrown
@@ -65,21 +63,19 @@ class Polyline():
     def __len__(self):
         return len(self.points)
 
-    def update(self, time_shift=1.0):
-
+    def update(self):
         for p in range(len(self.points)):
-
-            self.points[p] = self.points[p] + self.speeds[p] * time_shift
+            self.points[p] = self.points[p] + self.speeds[p]
             if self.points[p].x > SCREEN_DIM[0] or self.points[p].x < 0:
                 self.speeds[p].x *= -1
             if self.points[p].y > SCREEN_DIM[1] or self.points[p].y < 0:
                 self.speeds[p].y *= -1
 
-    def increase_speed(self, k):
+    def increase_speed(self, k=2):
         for i in range(len(self.speeds)):
             self.speeds[i] = self.speeds[i] * k
 
-    def decrease_speed(self, k):
+    def decrease_speed(self, k=2):
         for i in range(len(self.speeds)):
             self.speeds[i] = self.speeds[i] * (1 / k)
 
@@ -131,6 +127,7 @@ class Knot(Polyline):
                 points.extend(self._get_points(ptn, steps))
 
         knot_poly = Polyline(points, [Vec2d(0, 0)] * len(points))
+
         return knot_poly
 
 
@@ -151,17 +148,38 @@ class Helper():
         data.append(["Num-", "Less points"])
         data.append(["Up", "Speed up"])
         data.append(["Down", "Speed down"])
-        data.append(['Del', 'Delete a point'])
+        data.append(['Delete', 'Delete a point'])
         data.append(["", ""])
         data.append([str(self.steps), "Current points"])
 
         pygame.draw.lines(self.gameDisplay, (255, 50, 50, 255), True, [
             (0, 0), (800, 0), (800, 600), (0, 600)], 5)
         for i, text in enumerate(data):
-            self.gameDisplay.blit(font1.render(
-                text[0], True, (128, 128, 255)), (100, 100 + 30 * i))
-            self.gameDisplay.blit(font2.render(
-                text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
+            self.gameDisplay.blit(font1.render(text[0], True, (128, 128, 255)), (100, 100 + 30 * i))
+            self.gameDisplay.blit(font2.render(text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
+
+def draw_help():
+    gameDisplay.fill((50, 50, 50))
+    font1 = pygame.font.SysFont("courier", 24)
+    font2 = pygame.font.SysFont("serif", 24)
+    data = []
+    data.append(["F1", "Show Help"])
+    data.append(["R", "Restart"])
+    data.append(["P", "Pause/Play"])
+    data.append(["Num+", "More points"])
+    data.append(["Num-", "Less points"])
+    data.append(["Up", "Speed up"])
+    data.append(["Down", "Speed down"])
+    data.append(['Delete', 'Delete a point'])
+    data.append(["", ""])
+    data.append([str(steps), "Current points"])
+    data.append([str(len(poly)), "Current knots"])
+
+    pygame.draw.lines(gameDisplay, (255, 50, 50, 255), True, [
+        (0, 0), (800, 0), (800, 600), (0, 600)], 5)
+    for i, text in enumerate(data):
+        gameDisplay.blit(font1.render(text[0], True, (128, 128, 255)), (100, 100 + 30 * i))
+        gameDisplay.blit(font2.render(text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
 
 
 # Main program
@@ -176,7 +194,6 @@ if __name__ == "__main__":
     hue = 0
     color = pygame.Color(0)
     steps = 35
-    velocity = 1.0
 
     poly = Knot()
 
@@ -200,14 +217,13 @@ if __name__ == "__main__":
                 if event.key == pygame.K_DELETE:
                     if len(poly) > 0:
                         poly.remove_point(len(poly) - 1)
-                if event.key == pygame.K_z:
-                    velocity = max(0.1, velocity - 0.1)
-                if event.key == pygame.K_x:
-                    velocity = min(4.0, velocity + 0.1)
+                if event.key == pygame.K_UP:
+                    poly.increase_speed()
+                if event.key == pygame.K_DOWN:
+                    poly.decrease_speed()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                poly.add_point(Vec2d(*event.pos),
-                               Vec2d(random.random(), random.random()) * 2)
+                poly.add_point(Vec2d(*event.pos), Vec2d(random.random(), random.random()) * 2)
 
         gameDisplay.fill((0, 0, 0))
         hue = (hue + 1) % 360
@@ -217,10 +233,10 @@ if __name__ == "__main__":
         poly.get_knot_polyline(steps).draw_points("line", 3, color)
 
         if not pause:
-            poly.update(time_shift=velocity)
+            poly.update()
 
         if show_help:
-            # draw_help()
+            draw_help()
             pass
 
         pygame.display.flip()
