@@ -35,31 +35,139 @@ class AbstractEffect(Hero, ABC):
         self.base = base
 
     def get_stats(self):  # Возвращает итоговые характеристики применения эффекта
-        pass
+        self.base.get_stats()
 
     def get_positive_effects(self):
-        pass
+        self.base.get_positive_effects()
 
     def get_negative_effects(self):
-        pass
+        self.base.get_negative_effects()
 
-class AbstarctPositive(AbstractEffect):
+
+class AbstractPositive(AbstractEffect):
     pass
 
-class Berserk(AbstarctPositive):
-    pass
 
-class Blassing(AbstarctPositive):  # Благословение
-    pass
+# Берсерк — Увеличивает параметры Сила, Выносливость, Ловкость, Удача на 7;
+# уменьшает параметры Восприятие, Харизма, Интеллект на 3.
+# Количество единиц здоровья увеличивается на 50.
+
+class Berserk(AbstractPositive):
+
+    def get_stats(self):
+        stats = self.base.get_stats()
+        params = ["Strength", "Endurance", "Agility", "Luck"]
+
+        for param in params:
+            stats[param] += 7
+
+        params = ["Perception", "Charisma", "Intelligence"]
+
+        for param in params:
+            stats[param] -= 3
+            stats[param] = 0 if stats[param] < 0 else stats[param]
+
+        stats["HP"] += 50
+
+        return stats.copy()
+
+    def get_positive_effects(self):
+        positive_effects = self.base.get_positive_effects()
+        positive_effects.append("Berserk")
+
+        return positive_effects
+
+
+# Благословение — Увеличивает все основные характеристики на 2.
+
+class Blassing(AbstractPositive):  # Благословение
+    def get_stats(self):
+        stats = self.base.get_stats()
+        params = ["Strength", "Perception", "Endurance", "Charisma", "Intelligence", "Agility", "Luck"]
+
+        for param in params:
+            stats[param] += 2
+
+        return stats.copy()
+
+    def get_positive_effects(self):
+        positive_effects = self.base.get_positive_effects()
+        positive_effects.append("Blassing")
+
+        return positive_effects
+
 
 class AbstarctNegative(AbstractEffect):
     pass
 
+
+# Слабость — Уменьшает параметры Сила, Выносливость, Ловкость на 4.
+
 class Weakness(AbstarctNegative):  # Слабость
-    pass
+    def get_stats(self):
+        stats = self.base.get_stats()
+        params = ["Strength", "Endurance", "Agility"]
 
-class EvilEye(AbstarctNegative):   # Сглаз
-    pass
+        for param in params:
+            stats[param] -= 4
+            stats[param] = 0 if stats[param] < 0 else stats[param]
 
-class Curse(AbstarctNegative):     # Проклятие
-    pass
+        return stats.copy()
+
+    def get_negative_effects(self):
+        negative_effects = self.base.get_negative_effects()
+        negative_effects.append("Weakness")
+
+        return negative_effects
+
+
+# Сглаз — Уменьшает параметр Удача на 10.
+
+class EvilEye(AbstarctNegative):  # Сглаз
+    def get_stats(self):
+        stats = self.base.get_stats()
+        params = ["Luck"]
+
+        for param in params:
+            stats[param] -= 10
+            stats[param] = 0 if stats[param] < 0 else stats[param]
+
+        return stats.copy()
+
+    def get_negative_effects(self):
+        negative_effects = self.base.get_negative_effects()
+        negative_effects.append("EvilEye")
+
+        return negative_effects
+
+
+# Проклятье — Уменьшает все основные характеристики на 2.
+
+class Curse(AbstarctNegative):  # Проклятие
+    def get_stats(self):
+        stats = self.base.get_stats()
+        params = ["Strength", "Perception", "Endurance", "Charisma", "Intelligence", "Agility", "Luck"]
+
+        for param in params:
+            stats[param] -= 2
+            stats[param] = 0 if stats[param] < 0 else stats[param]
+
+        return stats.copy()
+
+    def get_negative_effects(self):
+        negative_effects = self.base.get_negative_effects()
+        negative_effects.append("Curse")
+
+        return negative_effects
+
+
+hero = Hero()
+print(hero.stats)
+
+berserk = Berserk(hero)
+print(berserk.get_stats())
+print(berserk.get_positive_effects())
+
+blassing = Blassing(berserk)
+print(blassing.get_stats())
+print(blassing.get_positive_effects())
