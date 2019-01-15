@@ -45,7 +45,12 @@ class AbstractEffect(Hero, ABC):
 
 
 class AbstractPositive(AbstractEffect):
-    pass
+
+    def get_positive_effects(self):
+        effects = self.base.get_positive_effects()
+        effects.append(type(self).__name__)
+
+        return effects
 
 
 # Берсерк — Увеличивает параметры Сила, Выносливость, Ловкость, Удача на 7;
@@ -65,17 +70,10 @@ class Berserk(AbstractPositive):
 
         for param in params:
             stats[param] -= 3
-            stats[param] = 0 if stats[param] < 0 else stats[param]
 
         stats["HP"] += 50
 
         return stats.copy()
-
-    def get_positive_effects(self):
-        positive_effects = self.base.get_positive_effects()
-        positive_effects.append("Berserk")
-
-        return positive_effects
 
 
 # Благословение — Увеличивает все основные характеристики на 2.
@@ -90,15 +88,13 @@ class Blassing(AbstractPositive):  # Благословение
 
         return stats.copy()
 
-    def get_positive_effects(self):
-        positive_effects = self.base.get_positive_effects()
-        positive_effects.append("Blassing")
-
-        return positive_effects
-
 
 class AbstarctNegative(AbstractEffect):
-    pass
+
+    def get_negaitve_effects(self):
+        effects = self.base.get_negative_effects()
+        effects.append(type(self).__name__)
+        return effects
 
 
 # Слабость — Уменьшает параметры Сила, Выносливость, Ловкость на 4.
@@ -110,15 +106,8 @@ class Weakness(AbstarctNegative):  # Слабость
 
         for param in params:
             stats[param] -= 4
-            stats[param] = 0 if stats[param] < 0 else stats[param]
 
         return stats.copy()
-
-    def get_negative_effects(self):
-        negative_effects = self.base.get_negative_effects()
-        negative_effects.append("Weakness")
-
-        return negative_effects
 
 
 # Сглаз — Уменьшает параметр Удача на 10.
@@ -130,15 +119,8 @@ class EvilEye(AbstarctNegative):  # Сглаз
 
         for param in params:
             stats[param] -= 10
-            stats[param] = 0 if stats[param] < 0 else stats[param]
 
         return stats.copy()
-
-    def get_negative_effects(self):
-        negative_effects = self.base.get_negative_effects()
-        negative_effects.append("EvilEye")
-
-        return negative_effects
 
 
 # Проклятье — Уменьшает все основные характеристики на 2.
@@ -150,15 +132,8 @@ class Curse(AbstarctNegative):  # Проклятие
 
         for param in params:
             stats[param] -= 2
-            stats[param] = 0 if stats[param] < 0 else stats[param]
 
         return stats.copy()
-
-    def get_negative_effects(self):
-        negative_effects = self.base.get_negative_effects()
-        negative_effects.append("Curse")
-
-        return negative_effects
 
 
 hero = Hero()
