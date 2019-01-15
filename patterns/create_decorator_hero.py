@@ -73,7 +73,7 @@ class Berserk(AbstractPositive):
 
         stats["HP"] += 50
 
-        return stats.copy()
+        return stats
 
 
 # Благословение — Увеличивает все основные характеристики на 2.
@@ -86,10 +86,10 @@ class Blassing(AbstractPositive):  # Благословение
         for param in params:
             stats[param] += 2
 
-        return stats.copy()
+        return stats
 
 
-class AbstarctNegative(AbstractEffect):
+class AbstractNegative(AbstractEffect):
 
     def get_negaitve_effects(self):
         effects = self.base.get_negative_effects()
@@ -99,7 +99,7 @@ class AbstarctNegative(AbstractEffect):
 
 # Слабость — Уменьшает параметры Сила, Выносливость, Ловкость на 4.
 
-class Weakness(AbstarctNegative):  # Слабость
+class Weakness(AbstractNegative):  # Слабость
     def get_stats(self):
         stats = self.base.get_stats()
         params = ["Strength", "Endurance", "Agility"]
@@ -107,12 +107,12 @@ class Weakness(AbstarctNegative):  # Слабость
         for param in params:
             stats[param] -= 4
 
-        return stats.copy()
+        return stats
 
 
 # Сглаз — Уменьшает параметр Удача на 10.
 
-class EvilEye(AbstarctNegative):  # Сглаз
+class EvilEye(AbstractNegative):  # Сглаз
     def get_stats(self):
         stats = self.base.get_stats()
         params = ["Luck"]
@@ -120,12 +120,12 @@ class EvilEye(AbstarctNegative):  # Сглаз
         for param in params:
             stats[param] -= 10
 
-        return stats.copy()
+        return stats
 
 
 # Проклятье — Уменьшает все основные характеристики на 2.
 
-class Curse(AbstarctNegative):  # Проклятие
+class Curse(AbstractNegative):  # Проклятие
     def get_stats(self):
         stats = self.base.get_stats()
         params = ["Strength", "Perception", "Endurance", "Charisma", "Intelligence", "Agility", "Luck"]
@@ -133,7 +133,7 @@ class Curse(AbstarctNegative):  # Проклятие
         for param in params:
             stats[param] -= 2
 
-        return stats.copy()
+        return stats
 
 
 hero = Hero()
