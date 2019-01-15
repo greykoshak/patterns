@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Hero:
@@ -34,6 +34,7 @@ class AbstractEffect(Hero, ABC):
     def __init__(self, base):
         self.base = base
 
+    @abstractmethod
     def get_stats(self):  # Возвращает итоговые характеристики применения эффекта
         self.base.get_stats()
 
@@ -44,7 +45,7 @@ class AbstractEffect(Hero, ABC):
         self.base.get_negative_effects()
 
 
-class AbstractNegative(AbstractEffect, ABC):
+class AbstractNegative(AbstractEffect):
 
     def get_negative_effects(self):
         negative_effects = self.base.get_negative_effects()
@@ -61,7 +62,7 @@ class AbstractNegative(AbstractEffect, ABC):
         return positive_effects
 
 
-class AbstractPositive(AbstractEffect, ABC):
+class AbstractPositive(AbstractEffect):
 
     def get_positive_effects(self):
         positive_effects = self.base.get_positive_effects()
