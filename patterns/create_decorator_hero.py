@@ -44,13 +44,38 @@ class AbstractEffect(Hero, ABC):
         self.base.get_negative_effects()
 
 
-class AbstractPositive(AbstractEffect):
+class AbstractNegative(AbstractEffect, ABC):
+
+    def get_negative_effects(self):
+        negative_effects = self.base.get_negative_effects()
+        if type(self).__name__ in ["Weakness", "EvilEye", "Curse"]:
+            negative_effects.append(type(self).__name__)
+
+        return negative_effects
 
     def get_positive_effects(self):
-        effects = self.base.get_positive_effects()
-        effects.append(type(self).__name__)
+        positive_effects = self.base.get_positive_effects()
+        if type(self).__name__ in ["Berserk", "Blessing"]:
+            positive_effects.append(type(self).__name__)
 
-        return effects
+        return positive_effects
+
+
+class AbstractPositive(AbstractEffect, ABC):
+
+    def get_positive_effects(self):
+        positive_effects = self.base.get_positive_effects()
+        if type(self).__name__ in ["Berserk", "Blessing"]:
+            positive_effects.append(type(self).__name__)
+
+        return positive_effects
+
+    def get_negative_effects(self):
+        negative_effects = self.base.get_negative_effects()
+        if type(self).__name__ in ["Weakness", "EvilEye", "Curse"]:
+            negative_effects.append(type(self).__name__)
+
+        return negative_effects
 
 
 # Берсерк — Увеличивает параметры Сила, Выносливость, Ловкость, Удача на 7;
@@ -78,7 +103,7 @@ class Berserk(AbstractPositive):
 
 # Благословение — Увеличивает все основные характеристики на 2.
 
-class Blassing(AbstractPositive):  # Благословение
+class Blessing(AbstractPositive):  # Благословение
     def get_stats(self):
         stats = self.base.get_stats()
         params = ["Strength", "Perception", "Endurance", "Charisma", "Intelligence", "Agility", "Luck"]
@@ -87,14 +112,6 @@ class Blassing(AbstractPositive):  # Благословение
             stats[param] += 2
 
         return stats
-
-
-class AbstractNegative(AbstractEffect):
-
-    def get_negaitve_effects(self):
-        effects = self.base.get_negative_effects()
-        effects.append(type(self).__name__)
-        return effects
 
 
 # Слабость — Уменьшает параметры Сила, Выносливость, Ловкость на 4.
@@ -137,12 +154,22 @@ class Curse(AbstractNegative):  # Проклятие
 
 
 hero = Hero()
-print(hero.stats)
-
+# print(hero.stats)
+# print(hero.get_positive_effects())
+# print(hero.get_negative_effects())
+#
 berserk = Berserk(hero)
-print(berserk.get_stats())
-print(berserk.get_positive_effects())
-
-blassing = Blassing(berserk)
-print(blassing.get_stats())
-print(blassing.get_positive_effects())
+# print(berserk.get_stats())
+# print(berserk.get_positive_effects())
+#
+blessing = Blessing(berserk)
+# print(blessing.get_stats())
+print(blessing.get_positive_effects())
+curse = Curse(blessing)
+# print(curse.get_stats())
+# print(curse.get_negative_effects())
+# curse = curse.base
+print("=============================")
+print("N", curse.get_negative_effects())
+print("P", curse.get_positive_effects())
+print(curse.get_stats())
