@@ -41,7 +41,7 @@ class WordCounterAdapter(TextProcessor):  # Адаптер к обработчи
     def __init__(self, adaptee):  # В конструкторе указывается, к какому объекту следует подключить адаптер
         self.adaptee = adaptee
 
-    def process_text(self, text):  # Реализация интерфейса обработчика, требуемого системой.
+    def process_text(self, text):  # Реализация интерфейса обработчика, требуемого системой
         self.adaptee.count_words(text)
         words = self.adaptee.get_all_words().keys()
         return sorted(words, key=lambda x: self.adaptee.get_count(x), reverse=True)
