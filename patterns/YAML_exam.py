@@ -6,11 +6,11 @@ from abc import ABC
 class AbstractLevel(yaml.YAMLObject):
     @classmethod
     def from_yaml(cls, loader, node):
-        level_map = cls.get_map()
-        level_objects = cls.get_objects()
-        level_objects.config = loader.construct_mapping(node)
+        _map = cls.get_map()
+        _obj = cls.get_objects()
+        _obj.config.update(loader.construct_mapping(node))
 
-        return {"map": level_map, "objects": level_objects}
+        return {"map": _map, "obj": _obj}
 
     @classmethod
     def get_map(cls):
@@ -45,7 +45,7 @@ class EasyLevel(AbstractLevel):
 
     class Objects:
         def __init__(self):
-            self.objects = [('next_lvl', (2, 2))]
+            self.obj = [('next_lvl', (2, 2))]
             self.config = {}
 
         def get_objects(self, _map):
@@ -54,14 +54,14 @@ class EasyLevel(AbstractLevel):
                 intersect = True
                 while intersect:
                     intersect = False
-                    for obj in self.objects:
+                    for obj in self.obj:
                         if coord == obj[1]:
                             intersect = True
                             coord = (random.randint(1, 3), random.randint(1, 3))
 
-                self.objects.append((obj_name, coord))
+                self.obj.append((obj_name, coord))
 
-            return self.objects
+            return self.obj
 
 
 class MediumLevel(AbstractLevel):
@@ -82,7 +82,7 @@ class MediumLevel(AbstractLevel):
 
     class Objects:
         def __init__(self):
-            self.objects = [('next_lvl', (4, 4))]
+            self.obj = [('next_lvl', (4, 4))]
             self.config = {'enemy': []}
 
         def get_objects(self, _map):
@@ -91,14 +91,14 @@ class MediumLevel(AbstractLevel):
                 intersect = True
                 while intersect:
                     intersect = False
-                    for obj in self.objects:
+                    for obj in self.obj:
                         if coord == obj[1]:
                             intersect = True
                             coord = (random.randint(1, 6), random.randint(1, 6))
 
-                self.objects.append((obj_name, coord))
+                self.obj.append((obj_name, coord))
 
-            return self.objects
+            return self.obj
 
 
 class HardLevel(AbstractLevel):
@@ -119,7 +119,7 @@ class HardLevel(AbstractLevel):
 
     class Objects:
         def __init__(self):
-            self.objects = [('next_lvl', (5, 5))]
+            self.obj = [('next_lvl', (5, 5))]
             self.config = {'enemy_count': 5, 'enemy': []}
 
         def get_objects(self, _map):
@@ -133,25 +133,29 @@ class HardLevel(AbstractLevel):
                             intersect = True
                             coord = (random.randint(1, 8), random.randint(1, 8))
                             continue
-                        for obj in self.objects:
+                        for obj in self.obj:
                             if coord == obj[1]:
                                 intersect = True
                                 coord = (random.randint(1, 8), random.randint(1, 8))
 
-                    self.objects.append((obj_name, coord))
+                    self.obj.append((obj_name, coord))
 
-            return self.objects
+            return self.obj
 
 # Solution
-Lebels = yaml.load('''levels:
-  - !easy_level {}
-  - !medium_level
-    enemy: ['rat']
-  - !hard_level
-    enemy: 
-    - rat
-    - snake
-    - dragon
-    enemy_count: 10''')
+# Levels = yaml.load('''levels:
+#   - !easy_level {}
+#   - !medium_level
+#     enemy: ['rat']
+#   - !hard_level
+#     enemy:
+#     - rat
+#     - snake
+#     - dragon
+#     enemy_count: 10''')
+#
+# # print(yaml.dump(Lebels))
+# print(Levels['levels'])
+# print(Levels['levels'][0])
+#
 
-# print(yaml.dump(Lebels))
