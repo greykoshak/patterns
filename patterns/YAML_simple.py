@@ -162,6 +162,7 @@ class Character(yaml.YAMLObject):
 
 loader = yaml.Loader
 loader.add_constructor("!factory", factory_constructor)
+pre = yaml.load(hero_yaml)
 hero = yaml.load(hero_yaml).create_hero()
 hero.hit()
 hero.cast()
