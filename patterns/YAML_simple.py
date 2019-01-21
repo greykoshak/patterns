@@ -135,6 +135,7 @@ class AssassinFactory(HeroFactory):
 
 def factory_constructor(loader, node):
     data = loader.construct_scalar(node)
+    print(node, data)
 
     if data == "mage":
         return MageFactory
