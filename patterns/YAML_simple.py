@@ -1,14 +1,15 @@
 # Использование yaml
 import yaml  # pip3 install pyyaml
+import pprint
 
 # Опишем конфигурацию, описывающую создание персонажа
 
 hero_yaml = '''
 --- !Character
 factory:
-  !factory assassin
+  !factory mage
 name:
-  7NaGiBaToR7
+  77NaGiBaToR77
 '''
 
 # Используем абстрактную фабрику, использование которой будем конфигурировать
@@ -134,6 +135,7 @@ class AssassinFactory(HeroFactory):
 
 def factory_constructor(loader, node):
     data = loader.construct_scalar(node)
+
     if data == "mage":
         return MageFactory
     elif data == "warrior":
@@ -159,10 +161,30 @@ class Character(yaml.YAMLObject):
         return hero
 
 # Присоединим конструктор и создадим персонажа в соответствии с yaml-конфигурацией.
+# yaml.add_constructor(u'!code', code_constructor)
+# value = loader.construct_mapping(node)
 
 loader = yaml.Loader
 loader.add_constructor("!factory", factory_constructor)
-pre = yaml.load(hero_yaml)
+
+character = yaml.load(hero_yaml)
+
+print("\nLoad class Character")
+pp = pprint.PrettyPrinter(indent=40)
+pp.pprint(character)
+print(character.factory)
+print(character.name)
+print()
+
 hero = yaml.load(hero_yaml).create_hero()
 hero.hit()
 hero.cast()
+
+print("------------------------------------\n")
+"""
+1. loader = yaml.Loader                                    # define loader YAML-document
+2. loader.add_constructor("!factory", factory_constructor) # add constructor for tag "!factory"
+3. character = yaml.load(hero_yaml)                        # create class Character (include yaml_tag = "!Character"
+4. hero = yaml.load(hero_yaml).create_hero()               # call method create.hero() of class Character
+5. hero.hit(), hero.cast()                                 # add properties
+"""
